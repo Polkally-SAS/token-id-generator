@@ -3,8 +3,8 @@
  */
 const fsp = require("fs/promises")
 const path = require("path")
-const ethSignUtil = require("eth-sig-util")
-const Web3 = require("web3")
+//const ethSignUtil = require("eth-sig-util")
+//const Web3 = require("web3")
 var ethUtil = require('ethereumjs-util');
 
 const tokenIdLogFile = path.join(__dirname,".token_id");
