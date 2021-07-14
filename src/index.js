@@ -51,6 +51,8 @@ module.exports = class TokenIdGenerator {
         const msgHash = ethUtil.hashPersonalMessage(message);
         const sig = ethUtil.ecsign(msgHash, pkBuffer);
 
+        
+
         var pub = ethUtil.ecrecover(msgHash, sig.v, sig.r, sig.s);
         
         var recoveredAddress = '0x' + ethUtil.pubToAddress(pub).toString('hex')
@@ -63,13 +65,17 @@ module.exports = class TokenIdGenerator {
 
         //console.log("recoveredAddress ===>>", recoveredAddress, "==", accounAddress)
 
-        return {
-            v: sig.v,
-            r: sig.r, 
-            s: sig.s, 
+        let ethSignSig = ethUtil.toRpcSig(sig.v, sig.r, sig.s);
+
+        let parsedResult = {
+            r: ethSignSig.slice(0, 66),
+            s: '0x' + ethSignSig.slice(66, 130),
+            v: parseInt(ethSignSig.slice(130, 132), 16),
             tokenId: Number(nextId),
-            signature: ethUtil.bufferToHex(this.concatSig(sig.v, sig.r, sig.s))
-        }
+            signature: ethSignSig
+        };
+
+        return parsedResult;
     } //end fun 
 
 
