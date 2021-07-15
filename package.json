@@ -10,6 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "eth-crypto": "^2.0.0",
     "eth-sig-util": "^3.0.1",
     "ethereumjs-util": "^7.1.0",
     "web3": "^1.4.0"
