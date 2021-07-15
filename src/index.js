@@ -46,13 +46,15 @@ module.exports = class TokenIdGenerator {
 
         let pkBuffer = Buffer.from(this.privateKey, 'hex')
 
-     
-        const message = Buffer.from(nextId);
+        const nextIdHex = ethUtil.addHexPrefix(this.padWithZeroes(ethUtil.stripHexPrefix(ethUtil.intToHex(nextId)), 64));
+        const message = ethUtil.keccakFromHexString(nextIdHex);
+
+        //const message = Buffer.from(nextId);
+        
         const msgHash = ethUtil.hashPersonalMessage(message);
-        const sig = ethUtil.ecsign(msgHash, pkBuffer);
+        const sig     = ethUtil.ecsign(msgHash, pkBuffer);
 
         
-
         var pub = ethUtil.ecrecover(msgHash, sig.v, sig.r, sig.s);
         
         var recoveredAddress = '0x' + ethUtil.pubToAddress(pub).toString('hex')
@@ -65,15 +67,14 @@ module.exports = class TokenIdGenerator {
 
         //console.log("recoveredAddress ===>>", recoveredAddress, "==", accounAddress)
 
-        let ethSignSig = ethUtil.toRpcSig(sig.v, sig.r, sig.s);
-
         let parsedResult = {
-            r: ethSignSig.slice(0, 66),
-            s: '0x' + ethSignSig.slice(66, 130),
-            v: parseInt(ethSignSig.slice(130, 132), 16),
+            v: sig.v,
+            r: ethUtil.bufferToHex(sig.r), 
+            s: ethUtil.bufferToHex(sig.s),
             tokenId: Number(nextId),
-            signature: ethSignSig
+            signature: ethUtil.bufferToHex(this.concatSig(sig.v, sig.r, sig.s))
         };
+
 
         return parsedResult;
     } //end fun 
